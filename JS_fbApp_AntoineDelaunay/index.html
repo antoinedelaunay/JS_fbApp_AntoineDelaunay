@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FB Friend App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Le styles -->
+<link href="css/indexCss.css" rel="stylesheet" type="text/css" >
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class="container">
+		<div class="app row span 12" style="width: 100%">
+			<h2>Fb Friends App</h2>
+			<!-- btn-group, see: http://twitter.github.com/bootstrap/components.html#buttonGroups -->
+			<hr>
+			<div class="btn-group">
+				<button class="btn btn-small btn-primary" id="byName">Sort
+					by name</button>
+				<button class="btn btn-small btn-primary" id="byBirthday">Sort
+					by birthday</button>
+				<button class="btn btn-small btn-primary" onclick="hideShow();"
+					id="hide">Hide/Show graph</button>
+			</div>
+			<hr>
+			<div>
+				<form class="form-search">
+					<input type="text" id="search" placeholder="Search...." />
+				</form>
+			</div>
+			<hr id="hr_chart">
+			<div id="boutton_chart">
+				<button class="btn btn-large" type="button" id="status">Status</button>
+				<button class="btn btn-large" type="button" id="age">Age</button>
+				<button class="btn btn-large" type="button" id="sexe">Sexe</button>
+				<!--<button class="btn btn-large" type="button" id="city">City</button>-->
+			</div>
+			<div class='chart' id="chart"
+				style="min-width: 300px; max-width: 1125px; height: 300px;"></div>
+			<hr>
+			<div class="friend-list row"></div>
+		</div>
+	</div>
+
+
+
+	<!-- Le javascript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="getFriends.js"></script>
+	<script src="js/jquery-1.9.0.js"></script>
+	<script src="js/bootstrap.2.2.2.js"></script>
+	<script src="js/underscore-min.js" type="text/javascript"></script>
+	<script src="js/backbone-min.js" type="text/javascript"></script>
+	<script src="js/highcharts.js"></script>
+
+	</script>
+
+	<script id="friendTmpl" type="text/x-template" charset="utf-8">
+      <div class="media">
+        <a class="pull-left">
+          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 86px; height: 86px;" src="<%= pic_big %>">
+        </a>
+        <div class="media-body">
+          <h4 class="media-heading"><a href="<%= profile_url %>"><%= sort_first_name %> <%= sort_last_name %></a></h4>
+          <%= relationship_status %><small/><br/>
+          <%= birthday_date %></small><br/>
+          <%= activities %></small><br/>
+        </div>
+        <hr>
+      </div>
+    </script>
+
+	<script type="text/javascript">
+		var FbApp = {};
+	</script>
+	<script src="app/Friend.js" type="text/javascript"></script>
+	<script src="app/Friends.js" type="text/javascript"></script>
+	<script src="app/FriendView.js" type="text/javascript"></script>
+	<script src="app/FriendsView.js" type="text/javascript"></script>
+	<script src="app/AppView.js" type="text/javascript"></script>
+
+	<script src="chart/ChartModel.js" type="text/javascript"
+		charset="utf-8"></script>
+	<script src="chart/ChartView.js" type="text/javascript" charset="utf-8"></script>
+	<script src="chart/SexChartModel.js" type="text/javascript"
+		charset="utf-8"></script>
+	<script src="chart/AgeChartModel.js" type="text/javascript"
+		charset="utf-8"></script>
+	<script src="chart/RelationShipChartModel.js" type="text/javascript"
+		charset="utf-8"></script>
+	<script src="chart/CityChartModel.js" type="text/javascript"
+		charset="utf-8"></script>
+
+
+
+	<script type="text/javascript">
+		FbApp.init = function() {
+			var myFriends = new FbApp.Friends();
+
+			var myApp = new FbApp.AppView({
+				collection : myFriends,
+				el : $('.app')[0]
+			});
+
+			//partie graph
+			var myRelationShipChartModel = new FbApp.RelationShipChartModel({
+				collection : myFriends,
+				title : 'Relation'
+			});
+
+			var myRelationShipChartView = new FbApp.ChartView({
+				model : myRelationShipChartModel,
+				el : $('.chart')[0]
+			});
+
+			var mySexChartModel = new FbApp.SexChartModel({
+				collection : myFriends,
+				title : 'Sex'
+			});
+
+			var mySexChartView = new FbApp.ChartView({
+				model : mySexChartModel,
+				el : $('.chart')[0]
+			});
+
+			var myAgeChartModel = new FbApp.AgeChartModel({
+				collection : myFriends,
+				title : 'Age'
+			});
+
+			var myAgeChartView = new FbApp.ChartView({
+				model : myAgeChartModel,
+				el : $('.chart')[0]
+			});
+			
+			/*var myCityChartModel = new FbApp.CityChartModel({
+				collection : myFriends,
+				title : 'Age'
+			});
+
+			var myCityView = new FbApp.ChartView({
+				model : myCityChartModel,
+				el : $('.chart')[0]
+			});
+			*/
+			//view
+
+			myApp.relationShipView = myRelationShipChartView;
+			myApp.ageView = myAgeChartView;
+			myApp.sexView = mySexChartView;
+			//myApp.cityView = myCityView;
+
+			myFriends.reset(getFriends());
+		};
+		FbApp.init();
+	</script>
+
+	<script type="text/javascript">
+		var hideShow = function() {
+			$('#hr_chart').toggle('0.5');
+			$('#boutton_chart').toggle('0.5');
+			$('#chart').toggle('1.5');
+		}
+	</script>
+</body>
+</html>
